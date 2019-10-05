@@ -2,74 +2,59 @@ import re
 
 
 def get_password_strength(password):
-    checklist = []
+    password_strength = 0
 
     # length
     if len(password) > mininmal_length:
-        checklist.append(1)
-    else:
-        checklist.append(0)
+        password_strength += 2
 
     # the use of both upper-case and lower-case letters (case sensitivity)
     if re.search('[A-Z]', password) and re.search('[a-z]', password):
-        checklist.append(1)
-    else:
-        checklist.append(0)
+        password_strength += 1
 
     # inclusion of one or more numerical digits
     if re.search('[\d]', password):
-        checklist.append(1)
-    else:
-        checklist.append(0)
+        password_strength += 1
 
     # inclusion of special characters, such as @, #, $
     if re.search('[@#$]', password):
-        checklist.append(1)
-    else:
-        checklist.append(0)
+        password_strength += 1
 
     # prohibition of words found in a password blacklist
     if not any(substring in password.lower() for substring in password_blacklist):
-        checklist.append(1)
-    else:
-        checklist.append(0)
+        password_strength += 1
 
     # prohibition of words found in the user's personal information
     words_list = user_personal_info.lower().split()
     if not any(substring in password.lower() for substring in words_list):
-        checklist.append(1)
-    else:
-        checklist.append(0)
+        password_strength += 1
 
     # prohibition of use of company name or an abbreviation
     if not company.lower() in password:
-        checklist.append(1)
-    else:
-        checklist.append(0)
+        password_strength += 1
 
     company_splitted = company.split()
     abbreviation = ''.join(word[0] for word in company_splitted)
     if len(company_splitted) > 1 and not abbreviation.lower() in password:
-        checklist.append(1)
-    else:
-        checklist.append(0)
+        password_strength += 1
 
     # prohibition of passwords that match the format of calendar dates,
     # license plate numbers, telephone numbers, or other common numbers
-    if not re.fullmatch('\d\d/\d\d/\d{4}', password) \
+    if check_for_numbers(password):
+        password_strength += 1
+
+    return password_strength
+
+
+def check_for_numbers(password):
+    if re.fullmatch('\d\d/\d\d/\d{4}', password) \
             or re.fullmatch('\d{4}/\d\d/\d\d', password) \
             or re.fullmatch('\d\d-\d\d-\d{4}', password) \
             or re.fullmatch('\d{4}-\d\d-\d\d', password) \
             or re.search('\d{3}-\d\d-\d\d', password) \
             or re.fullmatch('[a-zA-Z]\d{3}[a-zA-Z]{2}\d{2,3}', password):
-        checklist.append(1)
-    else:
-        checklist.append(0)
-
-    password_strength = round(10*sum(checklist)/len(checklist))
-
-    return password_strength
-
+        return False
+    return True
 
 def main():
     password = input('Input password: ')
