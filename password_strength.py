@@ -5,43 +5,35 @@ def get_password_strength(password):
     password_strength = 0
 
     # length
-    if len(password) > mininmal_length:
-        password_strength += 2
+    password_strength += len(password) > mininmal_length
+    password_strength += len(password) > 2*mininmal_length
 
     # the use of both upper-case and lower-case letters (case sensitivity)
-    if re.search('[A-Z]', password) and re.search('[a-z]', password):
-        password_strength += 1
+    password_strength += bool(re.search('[A-Z]', password) and re.search('[a-z]', password))
 
     # inclusion of one or more numerical digits
-    if re.search('[\d]', password):
-        password_strength += 1
+    password_strength += bool(re.search('[\d]', password))
 
     # inclusion of special characters, such as @, #, $
-    if re.search('[@#$]', password):
-        password_strength += 1
+    password_strength += bool(re.search('[@#$]', password))
 
     # prohibition of words found in a password blacklist
-    if not any(substring in password.lower() for substring in password_blacklist):
-        password_strength += 1
+    password_strength += not any(substring in password.lower() for substring in password_blacklist)
 
     # prohibition of words found in the user's personal information
     words_list = user_personal_info.lower().split()
-    if not any(substring in password.lower() for substring in words_list):
-        password_strength += 1
+    password_strength += not any(substring in password.lower() for substring in words_list)
 
     # prohibition of use of company name or an abbreviation
-    if not company.lower() in password:
-        password_strength += 1
+    password_strength += not company.lower() in password
 
     company_splitted = company.split()
     abbreviation = ''.join(word[0] for word in company_splitted)
-    if len(company_splitted) > 1 and not abbreviation.lower() in password:
-        password_strength += 1
+    password_strength += len(company_splitted) > 1 and not abbreviation.lower() in password
 
     # prohibition of passwords that match the format of calendar dates,
     # license plate numbers, telephone numbers, or other common numbers
-    if check_for_numbers(password):
-        password_strength += 1
+    password_strength += check_for_numbers(password)
 
     return password_strength
 
