@@ -5,7 +5,7 @@ def get_password_strength(password):
     checklist = []
 
     # length
-    if len(password) > 5:
+    if len(password) > mininmal_length:
         checklist.append(1)
     else:
         checklist.append(0)
@@ -48,12 +48,11 @@ def get_password_strength(password):
         checklist.append(0)
 
     company_splitted = company.split()
-    if len(company_splitted) > 1:
-        abbreviation = ''.join(word[0] for word in company_splitted)
-        if not abbreviation.lower() in password:
-            checklist.append(1)
-        else:
-            checklist.append(0)
+    abbreviation = ''.join(word[0] for word in company_splitted)
+    if len(company_splitted) > 1 and not abbreviation.lower() in password:
+        checklist.append(1)
+    else:
+        checklist.append(0)
 
     # prohibition of passwords that match the format of calendar dates,
     # license plate numbers, telephone numbers, or other common numbers
@@ -79,6 +78,7 @@ def main():
 
 if __name__ == '__main__':
     password_blacklist = ['password', 'pwd', 'parol']
+    mininmal_length = 5
     user_personal_info = 'Ivanov Ivan Inanovich, born 21.12.1975 in Moscow'
     company = 'General motors'
     main()
