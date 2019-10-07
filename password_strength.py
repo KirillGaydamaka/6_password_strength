@@ -1,42 +1,39 @@
 import re
+import getpass
 
+def check_password_length(password):
+    if len(password) > mininmal_length:
+        return 1
+    if len(password) > 2*mininmal_length:
+        return 2
 
-def get_password_strength(password):
-    password_strength = 0
+def check_case_sensitivity(password):
+    return bool(re.search('[A-Z]', password) and re.search('[a-z]', password))
 
-    # length
-    password_strength += len(password) > mininmal_length
-    password_strength += len(password) > 2*mininmal_length
+def check_for_digits(password):
+    return bool(re.search('[\d]', password))
 
-    # the use of both upper-case and lower-case letters (case sensitivity)
-    password_strength += bool(re.search('[A-Z]', password) and re.search('[a-z]', password))
+def check_for_special(password): # допилить
+    return bool(re.search('[@#$]', password))
 
-    # inclusion of one or more numerical digits
-    password_strength += bool(re.search('[\d]', password))
+def check_for_not_blacklisted(password):
+    blacklisted = any(substring in
+                      password.lower() for substring in password_blacklist)
+    return not blacklisted
 
-    # inclusion of special characters, such as @, #, $
-    password_strength += bool(re.search('[@#$]', password))
-
-    # prohibition of words found in a password blacklist
-    password_strength += not any(substring in password.lower() for substring in password_blacklist)
-
-    # prohibition of words found in the user's personal information
+def check_for_personal_info(password):
     words_list = user_personal_info.lower().split()
-    password_strength += not any(substring in password.lower() for substring in words_list)
+    contain_personal_info = any(substring in
+                                password.lower() for substring in words_list)
+    return not contain_personal_info
 
-    # prohibition of use of company name or an abbreviation
-    password_strength += not company.lower() in password
+def check_for_company_name(password):
+    return not company.lower() in password
 
+def check_for_company_abbreviation(password):
     company_splitted = company.split()
     abbreviation = ''.join(word[0] for word in company_splitted)
-    password_strength += len(company_splitted) > 1 and not abbreviation.lower() in password
-
-    # prohibition of passwords that match the format of calendar dates,
-    # license plate numbers, telephone numbers, or other common numbers
-    password_strength += check_for_numbers(password)
-
-    return password_strength
-
+    return len(company_splitted) > 1 and not abbreviation.lower() in password
 
 def check_for_numbers(password):
     if re.fullmatch('\d\d/\d\d/\d{4}', password) \
@@ -48,8 +45,23 @@ def check_for_numbers(password):
         return False
     return True
 
+def get_password_strength(password):
+    password_strength = 0
+    password_strength += check_password_length(password)
+    password_strength += check_case_sensitivity(password)
+    password_strength += check_for_digits(password)
+    password_strength += check_for_special(password)
+    password_strength += check_for_not_blacklisted(password)
+    password_strength += check_for_personal_info(password)
+    password_strength += check_for_company_name(password)
+    password_strength += check_for_company_abbreviation(password)
+    password_strength += check_for_numbers(password)
+    return password_strength
+
+
 def main():
     password = input('Input password: ')
+    #password = getpass.getpass()
     print('Password complexity: ', get_password_strength(password))
 
 
