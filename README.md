@@ -8,8 +8,14 @@ The script needs Python 3.5 interpreter.
 Example of script launch on Linux, Python 3.5:
 
 ```bash
-$ python password_strength.py
+$ python password_strength.py <password_blacklist_filepath> <minimal_length> <user_info_filepath>
 ```
+password_blacklist_filepath - path to the file with passwords blacklist. You can take a list of blacklisted passwords here: https://github.com/danielmiessler/SecLists/tree/master/Passwords.
+Default name: password_blacklist.txt. Each blacklisted password on new line.
+
+minimal_length - minimal length of the password (default is 5). If the password is shorter, password strength is decreased.
+
+user_info_filepath - path to the file with information about user. Default name: user_info.txt. First line in the file is user's company name, second line - user's personal information.
 
 Example of script work:
 
