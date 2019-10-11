@@ -60,14 +60,12 @@ def check_for_numbers(password):
 
 def create_parser():
     parser = argparse.ArgumentParser(description='Parameters')
-    parser.add_argument('password_blacklist_filepath', nargs='?',
-                        default='password_blacklist.txt',
-                        help='An optional password blacklist')
-    parser.add_argument('minimal_length', nargs='?', type=int,
-                        default=5, help='An optional minimal password length')
-    parser.add_argument('user_info_filepath', nargs='?',
-                        default='user_info.txt',
-                        help='An optional user info')
+    parser.add_argument('password_blacklist_filepath', nargs='1',
+                        help='Password blacklist file path')
+    parser.add_argument('minimal_length', nargs='1', type=int,
+                        help='Minimal password length')
+    parser.add_argument('user_info_filepath', nargs='1',
+                        help='User info file path')
     args = parser.parse_args()
     return args
 
