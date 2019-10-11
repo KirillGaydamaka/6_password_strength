@@ -48,12 +48,12 @@ def check_for_company_abbreviation(password, company):
 
 
 def check_for_numbers(password):
-    if any((re.fullmatch('\d\d/\d\d/\d{4}', password),
-            re.fullmatch('\d{4}/\d\d/\d\d', password),
-            re.fullmatch('\d\d-\d\d-\d{4}', password),
-            re.fullmatch('\d{4}-\d\d-\d\d', password),
-            re.search('\d{3}-\d\d-\d\d', password),
-            re.fullmatch('[a-zA-Z]\d{3}[a-zA-Z]{2}\d{2,3}', password))):
+    if any((re.fullmatch(r'\d\d/\d\d/\d{4}', password),
+            re.fullmatch(r'\d{4}/\d\d/\d\d', password),
+            re.fullmatch(r'\d\d-\d\d-\d{4}', password),
+            re.fullmatch(r'\d{4}-\d\d-\d\d', password),
+            re.search(r'\d{3}-\d\d-\d\d', password),
+            re.fullmatch(r'[a-zA-Z]\d{3}[a-zA-Z]{2}\d{2,3}', password))):
         return False
     return True
 
