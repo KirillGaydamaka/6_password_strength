@@ -24,8 +24,7 @@ def check_for_special(password):
 
 
 def check_for_blacklisted(password, password_blacklist):
-    blacklisted = any(substring in
-                      password.lower() for substring in password_blacklist)
+    blacklisted = password.lower() in password_blacklist
     return not blacklisted
 
 
