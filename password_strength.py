@@ -3,7 +3,6 @@ import re
 import string
 import getpass
 
-
 def check_password_length(password, minimal_length):
     if len(password) > minimal_length:
         return 1
@@ -60,11 +59,11 @@ def check_for_numbers(password):
 
 def create_parser():
     parser = argparse.ArgumentParser(description='Parameters')
-    parser.add_argument('password_blacklist_filepath', nargs='1',
+    parser.add_argument('password_blacklist_filepath', nargs=1,
                         help='Password blacklist file path')
-    parser.add_argument('minimal_length', nargs='1', type=int,
-                        help='Minimal password length')
-    parser.add_argument('user_info_filepath', nargs='1',
+    parser.add_argument('minimal_length', nargs=1, type=int,
+                        default=5, help='Minimal password length')
+    parser.add_argument('user_info_filepath', nargs=1,
                         help='User info file path')
     args = parser.parse_args()
     return args
@@ -101,10 +100,10 @@ def main():
     try:
         parser = create_parser()
         password_blacklist_fpath = parser.password_blacklist_filepath
-        password_blacklist = load_password_blacklist(password_blacklist_fpath)
-        minimal_length = parser.minimal_length
+        password_blacklist = load_password_blacklist(password_blacklist_fpath[0])
+        minimal_length = parser.minimal_length[0]
         user_info_filepath = parser.user_info_filepath
-        company, user_personal_info = load_user_info(user_info_filepath)
+        company, user_personal_info = load_user_info(user_info_filepath[0])
         password = getpass.getpass()
         print('Password complexity: ',
               get_password_strength(password,
