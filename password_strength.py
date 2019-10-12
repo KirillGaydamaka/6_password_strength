@@ -20,7 +20,7 @@ def check_for_digits(password):
 
 
 def check_for_special(password):
-    return bool(re.search('['+string.punctuation+']', password))
+    return bool(re.search('[{}]'.format(string.punctuation), password))
 
 
 def check_for_blacklisted(password, password_blacklist):
