@@ -59,26 +59,30 @@ def check_for_numbers(password):
 
 def create_parser():
     parser = argparse.ArgumentParser(description='Parameters')
+
     parser.add_argument('password_blacklist_filepath', nargs=1,
                         help='Password blacklist file path')
+
     parser.add_argument('minimal_length', nargs=1, type=int,
                         default=5, help='Minimal password length')
+
     parser.add_argument('user_info_filepath', nargs=1,
                         help='User info file path')
+
     args = parser.parse_args()
     return args
 
 
 def load_password_blacklist(filepath):
     with open(filepath, 'r', encoding='utf8') as file:
-        content = file.readlines()
-        return [x.strip() for x in content]
+        blacklist = file.read().splitlines()
+        return blacklist
 
 
 def load_user_info(filepath):
     with open(filepath, 'r', encoding='utf8') as file:
-        content = file.readlines()
-        return tuple([x.strip() for x in content])
+        company, user_personal_info = file.read().splitlines()
+        return company, user_personal_info
 
 
 def get_password_strength(password, password_blacklist, minimal_length,
