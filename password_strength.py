@@ -3,12 +3,11 @@ import re
 import string
 import getpass
 
+
 def check_password_length(password, minimal_length):
-    if len(password) > minimal_length:
-        return 1
     if len(password) > 2*minimal_length:
         return 2
-    return 0
+    return len(password) > minimal_length
 
 
 def check_case_sensitivity(password):
@@ -16,7 +15,7 @@ def check_case_sensitivity(password):
 
 
 def check_for_digits(password):
-    return bool(re.search('[\d]', password))
+    return bool(re.search(r'[\d]', password))
 
 
 def check_for_special(password):
@@ -46,14 +45,12 @@ def check_for_company_abbreviation(password, company):
 
 
 def check_for_numbers(password):
-    if any((re.fullmatch(r'\d\d/\d\d/\d{4}', password),
-            re.fullmatch(r'\d{4}/\d\d/\d\d', password),
-            re.fullmatch(r'\d\d-\d\d-\d{4}', password),
-            re.fullmatch(r'\d{4}-\d\d-\d\d', password),
-            re.search(r'\d{3}-\d\d-\d\d', password),
-            re.fullmatch(r'[a-zA-Z]\d{3}[a-zA-Z]{2}\d{2,3}', password))):
-        return False
-    return True
+    return any((re.fullmatch(r'\d\d/\d\d/\d{4}', password),
+                re.fullmatch(r'\d{4}/\d\d/\d\d', password),
+                re.fullmatch(r'\d\d-\d\d-\d{4}', password),
+                re.fullmatch(r'\d{4}-\d\d-\d\d', password),
+                re.search(r'\d{3}-\d\d-\d\d', password),
+                re.fullmatch(r'[a-zA-Z]\d{3}[a-zA-Z]{2}\d{2,3}', password)))
 
 
 def create_parser():
@@ -86,31 +83,29 @@ def load_user_info(filepath):
 
 def get_password_strength(password, password_blacklist, minimal_length,
                           user_personal_info, company):
-    password_strength = 0
-    password_strength += check_password_length(password, minimal_length)
-    password_strength += check_case_sensitivity(password)
-    password_strength += check_for_digits(password)
-    password_strength += check_for_special(password)
-    password_strength += check_for_blacklisted(password, password_blacklist)
-    password_strength += check_for_personal_info(password, user_personal_info)
-    password_strength += check_for_company_name(password, company)
-    password_strength += check_for_company_abbreviation(password, company)
-    password_strength += check_for_numbers(password)
-    return password_strength
+    return sum([check_password_length(password, minimal_length),
+                check_case_sensitivity(password),
+                check_for_digits(password),
+                check_for_special(password),
+                check_for_blacklisted(password, password_blacklist),
+                check_for_personal_info(password, user_personal_info),
+                check_for_company_name(password, company),
+                check_for_company_abbreviation(password, company),
+                check_for_numbers(password)])
 
 
 def main():
     try:
         parser = create_parser()
-        password_blacklist_fpath = parser.password_blacklist_filepath
-        password_blacklist = load_password_blacklist(password_blacklist_fpath[0])
+        blacklist_fpath = parser.password_blacklist_filepath
+        blacklist = load_password_blacklist(blacklist_fpath[0])
         minimal_length = parser.minimal_length[0]
         user_info_filepath = parser.user_info_filepath
         company, user_personal_info = load_user_info(user_info_filepath[0])
         password = getpass.getpass()
         print('Password complexity: ',
               get_password_strength(password,
-                                    password_blacklist,
+                                    blacklist,
                                     minimal_length,
                                     user_personal_info,
                                     company))
